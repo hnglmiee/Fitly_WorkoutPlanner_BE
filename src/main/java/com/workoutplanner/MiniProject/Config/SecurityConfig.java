@@ -1,7 +1,6 @@
 package com.workoutplanner.MiniProject.Config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,12 +10,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Collections;
 
 
@@ -26,10 +21,6 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth", "/api/v1/workout-plans", "/api/v1/auth/logout", "/api/v1/auth/introspect", "/api/v1/auth/refresh"};
-
-//    @Value("${jwt.signerKey}")
-//    private String signerKey;
-
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
@@ -37,15 +28,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         // Cau hinh quyen truy cap endpoint
         // Neu URL trong danh sach -> cho qua
+        // Bao ve khoi attack
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.authorizeHttpRequests(request ->
                         // Cho phep truy cap
-                        request.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-
+                request.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
                         // Spring Security kiểm tra quyền truy cập
                         // Spring Security không hiểu "ADMIN" trực tiếp là quyền, vì hasRole() hoặc hasAuthority() cần GrantedAuthority
                         // Spring sẽ xem GrantedAuthority của user (ROLE_USER) có khớp "ROLE_ADMIN" không → không khớp → 403.
                         .requestMatchers(HttpMethod.GET,"/api/v1/users").hasRole("ADMIN")
-
                         .anyRequest().authenticated());
 
         // Neu ko -> Tim token JWT de xac minh, token hop le -> cho qua
@@ -54,9 +46,6 @@ public class SecurityConfig {
 
         httpSecurity.oauth2ResourceServer(oath2 ->
                 oath2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter())));
-
-        // Bao ve khoi attack
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
 

@@ -34,7 +34,6 @@ public class WorkoutPlanService implements IWorkoutPlanService {
                 return workoutPlanResponse;
             }).collect(Collectors.toList());
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
