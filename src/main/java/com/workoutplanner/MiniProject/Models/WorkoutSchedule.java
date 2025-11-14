@@ -10,8 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Getter
-@Setter
+
 @Entity
 @Table(name = "WorkoutSchedules", schema = "workoutplanner")
 public class WorkoutSchedule {
@@ -39,4 +38,51 @@ public class WorkoutSchedule {
     @Column(name = "ScheduledTime")
     private LocalTime scheduledTime;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public WorkoutPlan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(WorkoutPlan plan) {
+        this.plan = plan;
+    }
+
+    public LocalDate getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(LocalDate scheduledDate) {
+        this.scheduledDate = scheduledDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Boolean getReminderSent() {
+        return reminderSent;
+    }
+
+    public void setReminderSent(Boolean reminderSent) {
+        this.reminderSent = reminderSent;
+    }
+
+    public LocalTime getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(LocalTime scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
 }

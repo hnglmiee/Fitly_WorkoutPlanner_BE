@@ -32,7 +32,12 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.authorizeHttpRequests(request ->
                         // Cho phep truy cap
-                request.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/api-docs/**").permitAll()
+                request.requestMatchers("/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
                         // Spring Security kiểm tra quyền truy cập
                         // Spring Security không hiểu "ADMIN" trực tiếp là quyền, vì hasRole() hoặc hasAuthority() cần GrantedAuthority

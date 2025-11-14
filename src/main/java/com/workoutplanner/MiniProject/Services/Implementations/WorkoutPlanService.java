@@ -90,7 +90,8 @@ public class WorkoutPlanService implements IWorkoutPlanService {
 
     @Override
     public WorkoutPlanResponse updateWorkoutPlan(Integer id, WorkoutPlanUpdateRequest request) {
-        WorkoutPlan workoutPlan = workoutPlanRepository.getWorkoutPlanById(id).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
+        WorkoutPlan workoutPlan = workoutPlanRepository.getWorkoutPlanById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
 
         // Request DTO -> Entity
         if (request.getTitle() != null && !request.getTitle().isEmpty()) {

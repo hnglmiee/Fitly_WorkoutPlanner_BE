@@ -23,8 +23,13 @@ public class ApiPaths {
         public static final String REGISTER = ROOT + "/register";
     }
 
-    // WORKOUT ENDPOINTS
+    // WORKOUT PLAN ENDPOINTS
     public static final class WorkoutPlan {
         public static final String ROOT = BASE_PATH + "/workout-plans";
+    }
+
+    // WORKOUT SCHEDULE ENDPOINTS
+    public static final class WorkoutSchedule {
+        public static final String ROOT = BASE_PATH + "/workout-schedules";
     }
 }

@@ -13,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(ApiPaths.WorkoutPlan.ROOT)
-public class WorkoutController {
+public class WorkoutPlannerController {
     private final IWorkoutPlanService workoutPlanService;
 
-    public WorkoutController(IWorkoutPlanService workoutPlanService) {
+    public WorkoutPlannerController(IWorkoutPlanService workoutPlanService) {
         this.workoutPlanService = workoutPlanService;
     }
 
