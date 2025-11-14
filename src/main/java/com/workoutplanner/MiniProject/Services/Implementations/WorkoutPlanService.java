@@ -12,6 +12,7 @@ import com.workoutplanner.MiniProject.Repositories.UserRepository;
 import com.workoutplanner.MiniProject.Repositories.WorkoutPlanRepository;
 import com.workoutplanner.MiniProject.Services.Interfaces.IWorkoutPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -119,5 +120,24 @@ public class WorkoutPlanService implements IWorkoutPlanService {
         WorkoutPlan workoutPlan = workoutPlanRepository.getWorkoutPlanById(id).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
         workoutPlanRepository.delete(workoutPlan);
         return true;
+    }
+
+    @Override
+    public List<WorkoutPlanResponse> getMyWorkoutPlan() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        List<WorkoutPlan> workoutPlans = workoutPlanRepository.findByUser(user);
+
+        return workoutPlans.stream().map(plan -> {
+            WorkoutPlanResponse workoutPlanResponse = new WorkoutPlanResponse();
+            workoutPlanResponse.setId(plan.getId());
+            workoutPlanResponse.setFullName(plan.getUser().getFullName());
+            workoutPlanResponse.setTitle(plan.getTitle());
+            workoutPlanResponse.setNotes(plan.getNotes());
+            workoutPlanResponse.setCreatedAt(plan.getCreatedAt());
+            workoutPlanResponse.setUpdatedAt(plan.getUpdatedAt());
+            return workoutPlanResponse;
+        }).toList();
     }
 }

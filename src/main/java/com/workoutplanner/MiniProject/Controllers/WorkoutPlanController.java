@@ -13,10 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(ApiPaths.WorkoutPlan.ROOT)
-public class WorkoutPlannerController {
+public class WorkoutPlanController {
     private final IWorkoutPlanService workoutPlanService;
 
-    public WorkoutPlannerController(IWorkoutPlanService workoutPlanService) {
+    public WorkoutPlanController(IWorkoutPlanService workoutPlanService) {
         this.workoutPlanService = workoutPlanService;
     }
 
@@ -32,6 +32,14 @@ public class WorkoutPlannerController {
     public ApiResponse<WorkoutPlanResponse> getAllWorkoutPlanById(@PathVariable int id) {
         ApiResponse<WorkoutPlanResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(workoutPlanService.getAllWorkoutPlanById(id));
+        apiResponse.setMessage("Get data successfully!");
+        return apiResponse;
+    }
+
+    @GetMapping("/my-plans")
+    public ApiResponse<List<WorkoutPlanResponse>> getMyPlans() {
+        ApiResponse<List<WorkoutPlanResponse>> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(workoutPlanService.getMyWorkoutPlan());
         apiResponse.setMessage("Get data successfully!");
         return apiResponse;
     }
