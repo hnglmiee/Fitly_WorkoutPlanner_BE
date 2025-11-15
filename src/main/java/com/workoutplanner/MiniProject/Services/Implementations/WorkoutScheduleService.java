@@ -3,7 +3,9 @@ package com.workoutplanner.MiniProject.Services.Implementations;
 import com.workoutplanner.MiniProject.Exception.AppException;
 import com.workoutplanner.MiniProject.Exception.ErrorCode;
 import com.workoutplanner.MiniProject.Models.User;
+import com.workoutplanner.MiniProject.Models.WorkoutPlan;
 import com.workoutplanner.MiniProject.Models.WorkoutSchedule;
+import com.workoutplanner.MiniProject.Payload.Request.WorkoutScheduleRequest;
 import com.workoutplanner.MiniProject.Payload.Response.WorkoutScheduleResponseAdmin;
 import com.workoutplanner.MiniProject.Payload.Response.WorkoutScheduleResponseCustomer;
 import com.workoutplanner.MiniProject.Repositories.UserRepository;
@@ -83,6 +85,40 @@ public class WorkoutScheduleService implements IWorkoutScheduleService {
         response.setStatus(workoutSchedule.getStatus());
         response.setReminderSent(workoutSchedule.getReminderSent());
         response.setFullName(workoutSchedule.getPlan().getUser().getFullName());
+        return response;
+    }
+
+    @Override
+    public WorkoutScheduleResponseCustomer createWorkoutSchedule(WorkoutScheduleRequest request) {
+        // Lay email tu token
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // Lay workout plan
+        WorkoutPlan plan = workoutPlanRepository.getWorkoutPlanById(request.getPlanId()).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
+
+        if (!plan.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED);
+        }
+
+        // DTO request -> Entity
+        WorkoutSchedule workoutSchedule = new WorkoutSchedule();
+        workoutSchedule.setPlan(plan);
+        workoutSchedule.setScheduledDate(request.getScheduledDate());
+        workoutSchedule.setScheduledTime(request.getScheduledTime());
+        workoutSchedule.setStatus("Pending");
+        workoutSchedule.setReminderSent(false);
+
+        workoutScheduleRepository.save(workoutSchedule);
+
+        // Entity -> DTO response
+        WorkoutScheduleResponseCustomer response = new WorkoutScheduleResponseCustomer();
+        response.setId(workoutSchedule.getId());
+        response.setPlanName(plan.getTitle());
+        response.setScheduledDate(workoutSchedule.getScheduledDate());
+        response.setScheduledTime(workoutSchedule.getScheduledTime());
+        response.setStatus(workoutSchedule.getStatus());
         return response;
     }
 }

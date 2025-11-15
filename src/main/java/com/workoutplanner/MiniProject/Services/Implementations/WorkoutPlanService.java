@@ -65,8 +65,11 @@ public class WorkoutPlanService implements IWorkoutPlanService {
 
     @Override
     public WorkoutPlanResponse createWorkoutPlan(WorkoutPlanRequest request) {
-        // Lay user tu DB
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+//        Ko nen cho user tu nhap vao id -> co the nhap lon -> sai
+//        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // DTO request -> Entity
         WorkoutPlan workoutPlan = new WorkoutPlan();
@@ -91,8 +94,21 @@ public class WorkoutPlanService implements IWorkoutPlanService {
 
     @Override
     public WorkoutPlanResponse updateWorkoutPlan(Integer id, WorkoutPlanUpdateRequest request) {
+//        Lấy thông tin user hiện tại từ token
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+//        Query DB (userRepository) để lấy đối tượng User.
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+//        Lấy WorkoutPlan cần update
         WorkoutPlan workoutPlan = workoutPlanRepository.getWorkoutPlanById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
+
+        // Kiểm tra quyền: chỉ owner mới được update, Nếu giống → tiếp tục.
+        // Neu nhu userId trong workout plan = user id trong user -> OK
+        if (!workoutPlan.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
 
         // Request DTO -> Entity
         if (request.getTitle() != null && !request.getTitle().isEmpty()) {
@@ -117,7 +133,17 @@ public class WorkoutPlanService implements IWorkoutPlanService {
 
     @Override
     public boolean deleteWorkoutPlan(Integer id) {
+        // Lấy email từ token
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // Lấy plan từ DB
         WorkoutPlan workoutPlan = workoutPlanRepository.getWorkoutPlanById(id).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
+
+        // Kiểm tra quyền
+        if (!workoutPlan.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
         workoutPlanRepository.delete(workoutPlan);
         return true;
     }

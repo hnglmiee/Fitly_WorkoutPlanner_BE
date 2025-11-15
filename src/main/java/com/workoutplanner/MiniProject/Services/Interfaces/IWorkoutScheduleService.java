@@ -1,5 +1,6 @@
 package com.workoutplanner.MiniProject.Services.Interfaces;
 
+import com.workoutplanner.MiniProject.Payload.Request.WorkoutScheduleRequest;
 import com.workoutplanner.MiniProject.Payload.Response.WorkoutScheduleResponseAdmin;
 import com.workoutplanner.MiniProject.Payload.Response.WorkoutScheduleResponseCustomer;
 
@@ -9,4 +10,5 @@ public interface IWorkoutScheduleService {
     List<WorkoutScheduleResponseAdmin> getAllWorkoutSchedule();
     List<WorkoutScheduleResponseCustomer> getMySchedule();
     WorkoutScheduleResponseAdmin getWorkoutScheduleById(Integer id);
+    WorkoutScheduleResponseCustomer createWorkoutSchedule(WorkoutScheduleRequest request);
 }

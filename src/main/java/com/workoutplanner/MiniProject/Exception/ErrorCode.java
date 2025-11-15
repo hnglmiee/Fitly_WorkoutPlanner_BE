@@ -13,14 +13,21 @@ public enum ErrorCode {
     USER_NOT_FOUND(1004, "User not found"),
 
     // ==============================
-    // USER ERRORS (1xxx)
-    // ==============================
-    WORKOUT_PLAN_NOT_EXISTED(3001, "Workout Plan not existed"),
-
-    // ==============================
-    // AUTHENTICATION ERRORS (1xxx)
+    // AUTHENTICATION ERRORS (2xxx)
     // ==============================
     UNAUTHENTICATED(2001, "Unauthenticated"),
+
+    // ==============================
+    // WORKOUT_PLAN_ERROR (3xxx)
+    // ==============================
+    WORKOUT_PLAN_NOT_EXISTED(3001, "Workout Plan not existed"),
+    FORBIDDEN(3002, "You don't have permission to this plan"),
+
+    // ==============================
+    // WORKOUT_PLAN_ERROR (4xxx)
+    // ==============================
+    WORKOUT_SCHEDULE_NOT_EXISTED(4001, "Workout Schedule not existed"),
+    WORKOUT_SCHEDULE_FORBIDDEN(3002, "You don't have permission to this schedule"),
 
     // ==============================
     // SYSTEM ERRORS (9xxx)
