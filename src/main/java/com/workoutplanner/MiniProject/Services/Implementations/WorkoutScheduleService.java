@@ -121,4 +121,65 @@ public class WorkoutScheduleService implements IWorkoutScheduleService {
         response.setStatus(workoutSchedule.getStatus());
         return response;
     }
+
+    @Override
+    public WorkoutScheduleResponseCustomer updateWorkoutPlan(Integer id, WorkoutScheduleRequest request) {
+        // Lay email tu token
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // Lấy schedule từ DB
+        WorkoutSchedule workoutSchedule = workoutScheduleRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.WORKOUT_SCHEDULE_NOT_EXISTED));
+
+        // Kiểm tra quyền: schedule phải thuộc về user
+        if(!workoutSchedule.getPlan().getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.WORKOUT_SCHEDULE_FORBIDDEN);
+        }
+
+        if (request.getPlanId() != null) {
+            WorkoutPlan newPlan = workoutPlanRepository.getWorkoutPlanById(request.getPlanId())
+                    .orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
+            // Chỉ cho đổi sang plan của chính user
+            if (!newPlan.getUser().getId().equals(user.getId())) {
+                throw new AppException(ErrorCode.FORBIDDEN); // ko cho đổi sang plan của người khác
+            }
+            workoutSchedule.setPlan(newPlan);
+        }
+        if (request.getScheduledDate() != null) {
+            workoutSchedule.setScheduledDate(request.getScheduledDate());
+        } if(request.getScheduledTime() != null) {
+            workoutSchedule.setScheduledTime(request.getScheduledTime());
+        }
+
+        workoutScheduleRepository.save(workoutSchedule);
+        WorkoutScheduleResponseCustomer response = new WorkoutScheduleResponseCustomer();
+        response.setId(workoutSchedule.getId());
+        response.setPlanName(workoutSchedule.getPlan().getTitle());
+        response.setScheduledDate(workoutSchedule.getScheduledDate());
+        response.setScheduledTime(workoutSchedule.getScheduledTime());
+        response.setStatus(workoutSchedule.getStatus());
+        return response;
+    }
+
+    @Override
+    public boolean deleteWorkoutSchedule(Integer id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        WorkoutSchedule workoutSchedule = workoutScheduleRepository.getWorkoutScheduleById(id).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_SCHEDULE_NOT_EXISTED));
+        if(!workoutSchedule.getPlan().getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.WORKOUT_SCHEDULE_FORBIDDEN);
+        }
+
+        workoutScheduleRepository.delete(workoutSchedule);
+        return true;
+    }
+
+    @Override
+    public boolean deleteWorkoutScheduleByAdmin(Integer id) {
+        WorkoutSchedule workoutSchedule = workoutScheduleRepository.getWorkoutScheduleById(id).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_SCHEDULE_NOT_EXISTED));
+        workoutScheduleRepository.delete(workoutSchedule);
+        return true;
+    }
 }

@@ -11,4 +11,7 @@ public interface IWorkoutScheduleService {
     List<WorkoutScheduleResponseCustomer> getMySchedule();
     WorkoutScheduleResponseAdmin getWorkoutScheduleById(Integer id);
     WorkoutScheduleResponseCustomer createWorkoutSchedule(WorkoutScheduleRequest request);
+    WorkoutScheduleResponseCustomer updateWorkoutPlan(Integer id, WorkoutScheduleRequest request);
+    boolean deleteWorkoutSchedule(Integer id);
+    boolean deleteWorkoutScheduleByAdmin(Integer id);
 }

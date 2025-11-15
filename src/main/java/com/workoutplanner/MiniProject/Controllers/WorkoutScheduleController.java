@@ -22,7 +22,7 @@ public class WorkoutScheduleController {
         this.workoutScheduleService = workoutScheduleService;
     }
 
-    @GetMapping()
+    @GetMapping("/admin")
     public ApiResponse<List<WorkoutScheduleResponseAdmin>> getAllWorkoutSchedules() {
         ApiResponse<List<WorkoutScheduleResponseAdmin>> apiResponse = new ApiResponse<>();
         apiResponse.setResult(workoutScheduleService.getAllWorkoutSchedule());
@@ -38,7 +38,7 @@ public class WorkoutScheduleController {
         return apiResponse;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/admin/{id}")
     public ApiResponse<WorkoutScheduleResponseAdmin> getScheduleById(@PathVariable int id) {
         ApiResponse<WorkoutScheduleResponseAdmin> apiResponse = new ApiResponse<>();
         apiResponse.setResult(workoutScheduleService.getWorkoutScheduleById(id));
@@ -51,6 +51,32 @@ public class WorkoutScheduleController {
         ApiResponse<WorkoutScheduleResponseCustomer> apiResponse = new ApiResponse<>();
         apiResponse.setResult(workoutScheduleService.createWorkoutSchedule(request));
         apiResponse.setMessage("Create data successfully!");
+        return apiResponse;
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<WorkoutScheduleResponseCustomer> updateWorkoutSchedule(@PathVariable Integer id, @RequestBody WorkoutScheduleRequest request) {
+        ApiResponse<WorkoutScheduleResponseCustomer> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(workoutScheduleService.updateWorkoutPlan(id, request));
+        apiResponse.setMessage("Update data successfully!");
+        return apiResponse;
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Boolean> deleteWorkoutSchedule(@PathVariable Integer id) {
+        workoutScheduleService.deleteWorkoutSchedule(id);
+        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(Boolean.TRUE);
+        apiResponse.setMessage("Delete data successfully!");
+        return apiResponse;
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public ApiResponse<Boolean> deleteWorkoutScheduleByAdmin(@PathVariable Integer id) {
+        workoutScheduleService.deleteWorkoutScheduleByAdmin(id);
+        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(Boolean.TRUE);
+        apiResponse.setMessage("Delete data successfully!");
         return apiResponse;
     }
 }

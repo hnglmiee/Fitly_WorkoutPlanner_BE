@@ -20,7 +20,7 @@ public class WorkoutPlanController {
         this.workoutPlanService = workoutPlanService;
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     public ApiResponse<List<WorkoutPlanResponse>> getAllWorkoutPlans() {
         ApiResponse<List<WorkoutPlanResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setResult(workoutPlanService.getAllWorkoutPlan());
@@ -28,7 +28,7 @@ public class WorkoutPlanController {
         return apiResponse;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/admin/{id}")
     public ApiResponse<WorkoutPlanResponse> getAllWorkoutPlanById(@PathVariable int id) {
         ApiResponse<WorkoutPlanResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(workoutPlanService.getAllWorkoutPlanById(id));
