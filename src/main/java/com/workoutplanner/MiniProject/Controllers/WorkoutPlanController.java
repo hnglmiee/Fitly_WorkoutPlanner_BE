@@ -68,4 +68,13 @@ public class WorkoutPlanController {
         apiResponse.setMessage("Delete data successfully!");
         return apiResponse;
     }
+
+    @DeleteMapping("/admin/{id}")
+    public ApiResponse<Boolean> deleteWorkoutPlanByAdmin(@PathVariable Integer id) {
+        workoutPlanService.deleteWorkoutPlanByAdmin(id);
+        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(Boolean.TRUE);
+        apiResponse.setMessage("Delete data successfully!");
+        return apiResponse;
+    }
 }

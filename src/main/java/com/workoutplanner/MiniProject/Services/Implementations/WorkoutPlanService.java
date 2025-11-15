@@ -149,6 +149,14 @@ public class WorkoutPlanService implements IWorkoutPlanService {
     }
 
     @Override
+    public boolean deleteWorkoutPlanByAdmin(Integer id) {
+        // Lấy plan từ DB
+        WorkoutPlan workoutPlan = workoutPlanRepository.getWorkoutPlanById(id).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_PLAN_NOT_EXISTED));
+        workoutPlanRepository.delete(workoutPlan);
+        return true;
+    }
+
+    @Override
     public List<WorkoutPlanResponse> getMyWorkoutPlan() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

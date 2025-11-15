@@ -13,5 +13,7 @@ public interface IWorkoutPlanService {
     WorkoutPlanResponse createWorkoutPlan(WorkoutPlanRequest request);
     WorkoutPlanResponse updateWorkoutPlan(Integer id, WorkoutPlanUpdateRequest request);
     boolean deleteWorkoutPlan(Integer id);
+    boolean deleteWorkoutPlanByAdmin(Integer id);
     List<WorkoutPlanResponse> getMyWorkoutPlan();
+
 }
