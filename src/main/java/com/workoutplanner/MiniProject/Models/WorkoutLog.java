@@ -10,8 +10,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "WorkoutLogs", schema = "workoutplanner")
 public class WorkoutLog {
@@ -46,4 +44,67 @@ public class WorkoutLog {
     @Column(name = "LoggedAt")
     private Instant loggedAt;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public WorkoutSchedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(WorkoutSchedule schedule) {
+        this.schedule = schedule;
+    }
+
+    public Exercise getExercise() {
+        return exercise;
+    }
+
+    public void setExercise(Exercise exercise) {
+        this.exercise = exercise;
+    }
+
+    public Integer getActualSets() {
+        return actualSets;
+    }
+
+    public void setActualSets(Integer actualSets) {
+        this.actualSets = actualSets;
+    }
+
+    public Integer getActualReps() {
+        return actualReps;
+    }
+
+    public void setActualReps(Integer actualReps) {
+        this.actualReps = actualReps;
+    }
+
+    public BigDecimal getActualWeight() {
+        return actualWeight;
+    }
+
+    public void setActualWeight(BigDecimal actualWeight) {
+        this.actualWeight = actualWeight;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Instant getLoggedAt() {
+        return loggedAt;
+    }
+
+    public void setLoggedAt(Instant loggedAt) {
+        this.loggedAt = loggedAt;
+    }
 }

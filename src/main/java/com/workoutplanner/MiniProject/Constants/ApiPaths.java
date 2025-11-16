@@ -32,4 +32,9 @@ public class ApiPaths {
     public static final class WorkoutSchedule {
         public static final String ROOT = BASE_PATH + "/workout-schedules";
     }
+
+    // WORKOUT LOG ENDPOINTS
+    public static final class WorkoutLog {
+        public static final String ROOT = BASE_PATH + "/workout-logs";
+    }
 }

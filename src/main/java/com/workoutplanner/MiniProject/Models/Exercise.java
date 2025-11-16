@@ -6,8 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "Exercises", schema = "workoutplanner")
 public class Exercise {
@@ -28,4 +26,35 @@ public class Exercise {
     @JoinColumn(name = "CategoryId")
     private ExerciseCategory category;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public ExerciseCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ExerciseCategory category) {
+        this.category = category;
+    }
 }
