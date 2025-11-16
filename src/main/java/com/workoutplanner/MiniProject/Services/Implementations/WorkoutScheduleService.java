@@ -93,6 +93,7 @@ public class WorkoutScheduleService implements IWorkoutScheduleService {
         // Lay email tu token
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        // Lay thong tin cua nguoi dung co email do
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Lay workout plan
@@ -126,6 +127,8 @@ public class WorkoutScheduleService implements IWorkoutScheduleService {
     public WorkoutScheduleResponseCustomer updateWorkoutPlan(Integer id, WorkoutScheduleRequest request) {
         // Lay email tu token
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Lay thong tin cua nguoi dung co email do
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Lấy schedule từ DB
