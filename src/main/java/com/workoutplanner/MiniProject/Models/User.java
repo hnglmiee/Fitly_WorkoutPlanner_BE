@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.*;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 //@Getter
 //@Setter
@@ -29,6 +30,12 @@ public class User {
 
     @Column(name = "PhoneNumber", length = 20)
     private String phoneNumber;
+
+    @Column(name = "Gender", length = 10)
+    private String gender;
+
+    @Column(name = "Birthday")
+    private LocalDate birthday;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "CreatedAt")
@@ -107,5 +114,21 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 }

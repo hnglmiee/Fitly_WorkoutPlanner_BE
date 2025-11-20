@@ -1,51 +1,21 @@
-package com.workoutplanner.MiniProject.Models;
-
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+package com.workoutplanner.MiniProject.Payload.Response;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-
-@Entity
-@Table(name = "UserInbody", schema = "workoutplanner")
-public class UserInbody {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "InbodyId", nullable = false)
+public class UserInbodyResponse {
     private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "UserId", nullable = false)
-    private User user;
-
-    @Column(name = "Age")
-    private Integer age;
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "MeasuredAt")
+    private String fullName;
     private Instant measuredAt;
-
-    @Column(name = "Height", precision = 5, scale = 2)
     private BigDecimal height;
-
-    @Column(name = "Weight", precision = 5, scale = 2)
     private BigDecimal weight;
-
-    @Column(name = "BodyFatPercentage", precision = 5, scale = 2)
     private BigDecimal bodyFatPercentage;
-
-    @Column(name = "MuscleMass", precision = 6, scale = 2)
     private BigDecimal muscleMass;
-
-    @Column(name = "Notes")
+    private BigDecimal bmi;
+    private BigDecimal leanBodyMass;
+    private String bodyFatTrend; // "up", "down", "stable"
+    private String muscleMassTrend; // "up", "down", "stable"
     private String notes;
-
 
     public Integer getId() {
         return id;
@@ -55,12 +25,12 @@ public class UserInbody {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public Instant getMeasuredAt() {
@@ -111,11 +81,35 @@ public class UserInbody {
         this.notes = notes;
     }
 
-    public Integer getAge() {
-        return age;
+    public BigDecimal getBmi() {
+        return bmi;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setBmi(BigDecimal bmi) {
+        this.bmi = bmi;
+    }
+
+    public BigDecimal getLeanBodyMass() {
+        return leanBodyMass;
+    }
+
+    public void setLeanBodyMass(BigDecimal leanBodyMass) {
+        this.leanBodyMass = leanBodyMass;
+    }
+
+    public String getBodyFatTrend() {
+        return bodyFatTrend;
+    }
+
+    public void setBodyFatTrend(String bodyFatTrend) {
+        this.bodyFatTrend = bodyFatTrend;
+    }
+
+    public String getMuscleMassTrend() {
+        return muscleMassTrend;
+    }
+
+    public void setMuscleMassTrend(String muscleMassTrend) {
+        this.muscleMassTrend = muscleMassTrend;
     }
 }

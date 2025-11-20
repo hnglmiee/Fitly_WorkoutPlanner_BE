@@ -37,4 +37,9 @@ public class ApiPaths {
     public static final class WorkoutLog {
         public static final String ROOT = BASE_PATH + "/workout-logs";
     }
+
+    // USER IN BODY ENDPOINTS
+    public static final class UserInBody {
+        public static final String ROOT = BASE_PATH + "/user-in-body";
+    }
 }

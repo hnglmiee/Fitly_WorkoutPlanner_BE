@@ -3,6 +3,8 @@ package com.workoutplanner.MiniProject.Payload.Request;
 
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
 public class UserCreationRequest {
     private String fullName;
     private String email;
@@ -10,15 +12,19 @@ public class UserCreationRequest {
     @Size(min = 8, message = "PASSWORD_INVALID")
     private String passwordHash;
     private String phoneNumber;
+    private String gender;
+    private LocalDate birthday;
 
     public UserCreationRequest() {
     }
 
-    public UserCreationRequest(String fullName, String email, String passwordHash, String phoneNumber) {
+    public UserCreationRequest(String fullName, String email, String passwordHash, String phoneNumber, String gender, LocalDate birthday) {
         this.fullName = fullName;
         this.email = email;
         this.passwordHash = passwordHash;
         this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.birthday = birthday;
     }
 
     public String getFullName() {
@@ -51,5 +57,21 @@ public class UserCreationRequest {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 }

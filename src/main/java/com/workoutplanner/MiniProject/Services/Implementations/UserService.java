@@ -59,6 +59,9 @@ public class UserService {
         // Gan default cho User
         user.setRole(defaultRole);
 
+        user.setGender(request.getGender());
+        user.setBirthday(request.getBirthday());
+
         // Luu User vao DB
         // Entity -> DTO
 //        User savedUser = userRepository.save(user);
@@ -112,6 +115,10 @@ public class UserService {
 //            user.setPasswordHash(request.getPasswordHash());
 //            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
             user.setPasswordHash(passwordEncoder.encode(request.getPasswordHash()));
+        } if(request.getGender() != null) {
+            user.setGender(request.getGender());
+        } if(request.getBirthday() != null) {
+            user.setBirthday(request.getBirthday());
         }
 
         User updatedUser = userRepository.save(user);
