@@ -41,6 +41,7 @@ public class ApiPaths {
     // USER IN BODY ENDPOINTS
     public static final class UserInBody {
         public static final String ROOT = BASE_PATH + "/user-in-body";
+        public static final String IMPORT = BASE_PATH + ROOT + "/import";
     }
 
     // USER GOAL ENDPOINTS
