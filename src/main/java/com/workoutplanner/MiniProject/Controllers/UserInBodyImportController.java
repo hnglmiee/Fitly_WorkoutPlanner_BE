@@ -43,7 +43,7 @@ public class UserInBodyImportController {
 
         try {
             // Gọi service chính để xử lý OCR
-            InBodyExtractResponse result = importService.importFromPdf(null, file);
+            InBodyExtractResponse result = importService.importFromPdf(file);
             apiResponse.setResult(result);
             apiResponse.setMessage("Upload & OCR successfully!");
             apiResponse.setCode(200);

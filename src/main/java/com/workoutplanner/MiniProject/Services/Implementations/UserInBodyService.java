@@ -4,6 +4,8 @@ import com.workoutplanner.MiniProject.Exception.AppException;
 import com.workoutplanner.MiniProject.Exception.ErrorCode;
 import com.workoutplanner.MiniProject.Models.User;
 import com.workoutplanner.MiniProject.Models.UserInbody;
+import com.workoutplanner.MiniProject.Payload.Request.UserInBodyUpdateRequest;
+import com.workoutplanner.MiniProject.Payload.Response.UserInBodyUpdateResponse;
 import com.workoutplanner.MiniProject.Payload.Response.UserInbodyResponse;
 import com.workoutplanner.MiniProject.Repositories.UserInbodyRepository;
 import com.workoutplanner.MiniProject.Repositories.UserRepository;
@@ -14,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +97,55 @@ public class UserInBodyService implements IUserInBodyService {
             response.setNotes(userInbody.getNotes());
             userInbodyResponses.add(response);
         }
-
         return userInbodyResponses;
+    }
+
+    @Override
+    public UserInBodyUpdateResponse updateUserInBody(Integer id, UserInBodyUpdateRequest request) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        UserInbody userInbody = userInbodyRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_INBODY_NOT_FOUND));
+
+        // Request DTO -> Entity
+        if (request.getAge() != null) {
+            userInbody.setAge(request.getAge());
+        } if(request.getHeight() != null) {
+            userInbody.setHeight(request.getHeight());
+        } if(request.getWeight() != null) {
+            userInbody.setWeight(request.getWeight());
+        } if(request.getBodyFatPercentage() != null) {
+            userInbody.setBodyFatPercentage(request.getBodyFatPercentage());
+        } if(request.getMuscleMass() != null) {
+            userInbody.setMuscleMass(request.getMuscleMass());
+        } if(request.getMeasuredAt() != null) {
+            userInbody.setMeasuredAt(Instant.now());
+        } if (request.getNotes() != null) {
+            userInbody.setNotes(request.getNotes());
+        }
+
+        // Save
+        userInbodyRepository.save(userInbody);
+
+        // Entity -> Response DTO
+        UserInBodyUpdateResponse response = new UserInBodyUpdateResponse();
+        response.setId(userInbody.getId());
+        response.setAge(userInbody.getAge());
+        response.setHeight(userInbody.getHeight());
+        response.setWeight(userInbody.getWeight());
+        response.setBodyFatPercentage(userInbody.getBodyFatPercentage());
+        response.setMuscleMass(userInbody.getMuscleMass());
+        response.setMeasuredAt(userInbody.getMeasuredAt());
+        response.setNotes(userInbody.getNotes());
+        return response;
+    }
+
+    @Override
+    public boolean deleteUserInBody(Integer id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        UserInbody userInbody = userInbodyRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_INBODY_NOT_FOUND));
+        userInbodyRepository.delete(userInbody);
+        return true;
     }
 }
