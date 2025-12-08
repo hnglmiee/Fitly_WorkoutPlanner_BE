@@ -40,6 +40,9 @@ public class UserInBodyImportService {
     @Autowired
     private UserInbodyRepository userInbodyRepository;
 
+    @Autowired
+    private OcrClientService ocrClientService;
+
     // Nhận file PDF upload từ client.
     // Trả về DTO chứa dữ liệu đã parse.
     public InBodyExtractResponse importFromPdf(MultipartFile file) throws IOException, TesseractException {
@@ -100,41 +103,56 @@ public class UserInBodyImportService {
         return parsed;
     }
 
-    public InBodyExtractResponse importFromImage(MultipartFile file) throws IOException, TesseractException {
+    public InBodyExtractResponse importFromImage(MultipartFile file) throws IOException {
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        // 1) Convert MultipartFile -> BufferedImage
-        BufferedImage image = javax.imageio.ImageIO.read(file.getInputStream());
-        if(image == null) {
-            throw new IllegalArgumentException("Invalid image format");
-        }
+        // 1) Gọi OCR server (paddleocr)
+        String rawText = ocrClientService.doOcr(file);
 
-        // 2) OCR ảnh
-        String rawText = ocrService.doOcr(image);
-
-        // 3) Parse bằng regex
+        // 2) Parse bằng regex như cũ
         InBodyExtractResponse parsed = new InBodyExtractResponse();
-        Integer age = parserService.extractIntFirstMatch(rawText,"(\\d{1,3})\\s+(Female|Male)");
-        Double heightVal = parserService.extractDoubleFirstMatch(rawText,"([0-9]{2,3}\\.[0-9]+)\\s*cm");
-        Double weightVal = parserService.extractDoubleFirstMatch(rawText,"Weight\\s*\\(kg\\)\\s*([0-9]{1,3}(?:\\.[0-9]+)?)");
-        Double bodyFatVal = parserService.extractDoubleFirstMatch(rawText,"(PBF|Percent Body Fat)[^0-9]*([0-9]{1,3}(?:\\\\.[0-9]+)?)");
-        Double muscleVal = parserService.extractDoubleFirstMatch(rawText,"SMM[^0-9]+([0-9]{1,3}(?:\\\\.[0-9]+)?)\n");
+        Integer age = parserService.extractIntFirstMatch(
+                rawText,
+                "\\b(1[0-9]|[2-9][0-9])\\b(?=\\s*Female|\\s*Male)"
+        );
+
+        Double heightVal = parserService.extractDoubleFirstMatch(
+                rawText,
+                "([0-9]{2,3}\\.[0-9]{1,2})\\s*cm"
+        );
+
+        Double weightVal = parserService.extractDoubleFirstMatch(
+                rawText,
+                "Weight[\\s\\S]{0,20}?([0-9]{1,3}\\.?[0-9]*)"
+        );
+
+        Double bodyFatVal = parserService.extractDoubleFirstMatch(
+                rawText,
+                "Percent Body Fat[\\s\\S]{0,40}?([0-9]{1,3}\\.?[0-9]*)"
+        );
+
+        Double muscleVal = parserService.extractDoubleFirstMatch(
+                rawText,
+                "SMM[\\s\\S]{0,20}?([0-9]{1,3}\\.?[0-9]*)"
+        );
+
 
         parsed.setAge(age);
-        parsed.setHeight(heightVal == null ? null : new BigDecimal(heightVal.toString()));
-        parsed.setWeight(weightVal == null ? null : new BigDecimal(weightVal.toString()));
-        parsed.setBodyFatPercentage(bodyFatVal == null ? null : new BigDecimal(bodyFatVal.toString()));
-        parsed.setMuscleMass(muscleVal == null ? null : new BigDecimal(muscleVal.toString()));
+        parsed.setHeight(heightVal == null ? null : new BigDecimal(heightVal));
+        parsed.setWeight(weightVal == null ? null : new BigDecimal(weightVal));
+        parsed.setBodyFatPercentage(bodyFatVal == null ? null : new BigDecimal(bodyFatVal));
+        parsed.setMuscleMass(muscleVal == null ? null : new BigDecimal(muscleVal));
         parsed.setMeasuredAt(Instant.now());
 
-        System.out.println("=== RAW TEXT OCR ===");
+        System.out.println("=== RAW TEXT (from PaddleOCR) ===");
         System.out.println(rawText);
-        System.out.println("====================");
 
-
-        // 4) Map vào entity
+        // 3) Map vào entity
         UserInbody inbody = new UserInbody();
+        // Không set inbody.setUser(user) = KHÔNG THỂ biết record thuộc về user nào.
         inbody.setUser(user);
         inbody.setAge(parsed.getAge());
         inbody.setMeasuredAt(parsed.getMeasuredAt());
@@ -142,13 +160,10 @@ public class UserInBodyImportService {
         inbody.setWeight(parsed.getWeight());
         inbody.setBodyFatPercentage(parsed.getBodyFatPercentage());
         inbody.setMuscleMass(parsed.getMuscleMass());
-        inbody.setNotes("Imported from Image; rawText length=" + rawText.length());
+        inbody.setNotes("Imported from Image; length=" + rawText.length());
 
-        // 5) Save DB
         UserInbody saved = userInbodyRepository.save(inbody);
         parsed.setId(saved.getId());
         return parsed;
-
     }
-
 }
