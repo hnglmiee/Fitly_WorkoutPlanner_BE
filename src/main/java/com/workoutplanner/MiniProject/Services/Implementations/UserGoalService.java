@@ -5,6 +5,8 @@ import com.workoutplanner.MiniProject.Exception.ErrorCode;
 import com.workoutplanner.MiniProject.Models.User;
 import com.workoutplanner.MiniProject.Models.UserGoal;
 import com.workoutplanner.MiniProject.Models.UserInbody;
+import com.workoutplanner.MiniProject.Payload.Request.UserGoalRequest;
+import com.workoutplanner.MiniProject.Payload.Response.UserGoalCreateResponse;
 import com.workoutplanner.MiniProject.Payload.Response.UserGoalResponse;
 import com.workoutplanner.MiniProject.Repositories.UserGoalRepository;
 import com.workoutplanner.MiniProject.Repositories.UserInbodyRepository;
@@ -63,7 +65,40 @@ public class UserGoalService implements IUserGoalService {
         return response;
     }
 
-//    Lấy user đang đăng nhập
+    @Override
+    public UserGoalCreateResponse createUserGoal(UserGoalRequest request) {
+        User user = getCurrentUser();
+
+        UserGoal goal = new UserGoal();
+        goal.setUser(user);
+        goal.setGoalName(request.getGoalName());
+        goal.setTargetWeight(request.getTargetWeight());
+        goal.setTargetBodyFatPercentage(request.getTargetBodyFatPercentage());
+        goal.setTargetMuscleMass(request.getTargetMuscleMass());
+        goal.setTargetWorkoutSessionsPerWeek(request.getTargetWorkoutSessionsPerWeek());
+        goal.setTargetCaloriesPerDay(request.getTargetCaloriesPerDay());
+        goal.setStartDate(request.getStartDate());
+        goal.setEndDate(request.getEndDate());
+        goal.setStatus("ACTIVE");
+        goal.setNotes(request.getNotes());
+
+        userGoalRepository.save(goal);
+        UserGoalCreateResponse response = new UserGoalCreateResponse();
+        response.setGoalName(goal.getGoalName());
+        response.setTargetWeight(goal.getTargetWeight());
+        response.setTargetBodyFatPercentage(goal.getTargetBodyFatPercentage());
+        response.setTargetMuscleMass(goal.getTargetMuscleMass());
+        response.setTargetWorkoutSessionsPerWeek(goal.getTargetWorkoutSessionsPerWeek());
+        response.setTargetCaloriesPerDay(goal.getTargetCaloriesPerDay());
+        response.setStartDate(goal.getStartDate());
+        response.setEndDate(goal.getEndDate());
+        response.setNotes(goal.getNotes());
+        response.setStatus(goal.getStatus());
+        response.setNotes(goal.getNotes());
+        return response;
+    }
+
+    //    Lấy user đang đăng nhập
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

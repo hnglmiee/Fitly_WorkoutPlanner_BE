@@ -131,14 +131,13 @@ public class UserInBodyImportService {
 
         Double bodyFatVal = parserService.extractDoubleFirstMatch(
                 rawText,
-                "Percent Body Fat[\\s\\S]{0,40}?([0-9]{1,3}\\.?[0-9]*)"
+                "Percent Body Fat[^0-9]{0,20}([0-9]{1,3}\\.?[0-9]*)"
         );
 
         Double muscleVal = parserService.extractDoubleFirstMatch(
                 rawText,
-                "SMM[\\s\\S]{0,20}?([0-9]{1,3}\\.?[0-9]*)"
+                "Skeletal Muscle Mass[^0-9]{0,20}([0-9]{1,3}\\.?[0-9]*)"
         );
-
 
         parsed.setAge(age);
         parsed.setHeight(heightVal == null ? null : new BigDecimal(heightVal));
