@@ -1,25 +1,24 @@
 version: '3.8'
 services:
   mysql:
-    # Thay build bằng image từ Docker Hub
+    # Thay build bằng image từ Docker
     image: lamiee/workoutplanner-mysql:latest
-
-    # Nếu muốn build local, uncomment 2 dòng dưới và comment dòng image ở trên
-    # build: .
-
     container_name: workoutplanner
     restart: always
+
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: workoutplanner
       MYSQL_USER: lamiee
       MYSQL_PASSWORD: lamiee
+
     ports:
       - "3307:3306"
+      -
     volumes:
       - mysql_data:/var/lib/mysql
-      # Vẫn giữ schema.sql để có thể init lại nếu cần.
-      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+#      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 10s
