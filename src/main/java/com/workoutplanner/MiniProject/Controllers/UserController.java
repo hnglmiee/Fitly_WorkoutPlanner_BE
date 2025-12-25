@@ -61,9 +61,9 @@ public class UserController {
     }
 
     @GetMapping("/myInfo")
-    public UserCreationResponse getMyInfo() {
+    public ApiResponse<UserCreationResponse> getMyInfo() {
         ApiResponse<UserCreationResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getMyInfo());
-        return apiResponse.getResult();
+        return apiResponse;
     }
 }

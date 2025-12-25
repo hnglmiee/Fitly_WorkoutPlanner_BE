@@ -44,6 +44,11 @@ public class ApiPaths {
         public static final String IMPORT = BASE_PATH + ROOT + "/import";
     }
 
+    // WORKOUT EXERCISE ENDPOINTS
+    public static final class WorkoutExercise {
+        public static final String ROOT = BASE_PATH + "/workout-exercise";
+    }
+
     // USER GOAL ENDPOINTS
     public static final class UserGoal {
         public static final String ROOT = BASE_PATH + "/goal";

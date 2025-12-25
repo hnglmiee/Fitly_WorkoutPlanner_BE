@@ -23,7 +23,7 @@ import java.util.Collections;
 @CrossOrigin(origins = "http://localhost:5173")
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/api/v1/auth", "/api/v1/workout-plans", "/api/v1/auth/logout", "/api/v1/auth/introspect", "/api/v1/auth/refresh"};
+    private final String[] PUBLIC_ENDPOINTS = {"/api/v1/users","/api/v1/auth", "/api/v1/workout-plans", "/api/v1/auth/logout", "/api/v1/auth/introspect", "/api/v1/auth/refresh"};
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
