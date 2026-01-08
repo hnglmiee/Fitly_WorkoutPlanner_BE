@@ -63,7 +63,7 @@ public class WorkoutExerciseService implements IWorkoutExerciseService {
             workoutExerciseResponse.setWorkoutExerciseId(exercise.getId());
             workoutExerciseResponse.setPlanId(exercise.getPlan().getId());
             workoutExerciseResponse.setPlanTitle(exercise.getPlan().getTitle());
-            workoutExerciseResponse.setExerciseId(exercise.getId());
+            workoutExerciseResponse.setExerciseId(exercise.getExercise().getId());
             workoutExerciseResponse.setExerciseName(exercise.getExercise().getName());
             workoutExerciseResponse.setSets(exercise.getSets());
             workoutExerciseResponse.setReps(exercise.getReps());

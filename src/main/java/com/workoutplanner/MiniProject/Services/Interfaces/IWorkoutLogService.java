@@ -9,6 +9,7 @@ import java.util.List;
 public interface IWorkoutLogService {
     List<WorkoutLogResponse> getAllWorkoutLog();
     List<WorkoutLogResponse> getMyWorkoutLog();
+    List<WorkoutLogResponse> getAllWorkoutLogByScheduleId(Integer scheduleId);
     WorkoutLogResponse createWorkoutLog(WorkoutLogRequest request);
     WorkoutLogResponse updateWorkoutLog(Integer id, WorkoutLogRequest request);
     boolean deleteWorkoutLog(Integer id);

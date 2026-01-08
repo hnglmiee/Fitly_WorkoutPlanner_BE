@@ -36,7 +36,7 @@ public class WorkoutExerciseController {
         return apiResponse;
     }
 
-    @PostMapping("/{id}")
+    @PostMapping()
     public ApiResponse<WorkoutExerciseResponse> createWorkoutExercises(@RequestBody @Valid WorkoutExerciseRequest request) {
         ApiResponse<WorkoutExerciseResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(workoutExerciseService.createWorkoutExercise(request));

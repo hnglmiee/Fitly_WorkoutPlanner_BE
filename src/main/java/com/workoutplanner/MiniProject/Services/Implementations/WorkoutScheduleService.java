@@ -9,6 +9,7 @@ import com.workoutplanner.MiniProject.Payload.Request.WorkoutScheduleRequest;
 import com.workoutplanner.MiniProject.Payload.Response.WorkoutScheduleResponseAdmin;
 import com.workoutplanner.MiniProject.Payload.Response.WorkoutScheduleResponseCustomer;
 import com.workoutplanner.MiniProject.Repositories.UserRepository;
+import com.workoutplanner.MiniProject.Repositories.WorkoutExerciseRepository;
 import com.workoutplanner.MiniProject.Repositories.WorkoutPlanRepository;
 import com.workoutplanner.MiniProject.Repositories.WorkoutScheduleRepository;
 import com.workoutplanner.MiniProject.Services.Interfaces.IWorkoutScheduleService;
@@ -27,6 +28,8 @@ public class WorkoutScheduleService implements IWorkoutScheduleService {
     private WorkoutPlanRepository workoutPlanRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private WorkoutExerciseRepository workoutExerciseRepository;
 
     public WorkoutScheduleService(WorkoutScheduleRepository workoutScheduleRepository, WorkoutPlanRepository workoutPlanRepository) {
         this.workoutScheduleRepository = workoutScheduleRepository;
@@ -185,4 +188,7 @@ public class WorkoutScheduleService implements IWorkoutScheduleService {
         workoutScheduleRepository.delete(workoutSchedule);
         return true;
     }
+
+
+
 }

@@ -6,6 +6,7 @@ import java.time.Instant;
 public class WorkoutLogResponse {
     private Integer scheduleId;
     private String exerciseName;
+    private Integer exerciseId;
     private Integer actualSets;
     private Integer actualReps;
     private BigDecimal actualWeight;
@@ -66,5 +67,13 @@ public class WorkoutLogResponse {
 
     public void setLoggedAt(Instant loggedAt) {
         this.loggedAt = loggedAt;
+    }
+
+    public Integer getExerciseId() {
+        return exerciseId;
+    }
+
+    public void setExerciseId(Integer exerciseId) {
+        this.exerciseId = exerciseId;
     }
 }

@@ -37,6 +37,15 @@ public class WorkoutLogController {
         return apiResponse;
     }
 
+    @GetMapping("/schedule/{scheduleId}")
+    public ApiResponse<List<WorkoutLogResponse>> getAllWorkoutLogs(@PathVariable Integer scheduleId) {
+        List<WorkoutLogResponse> logs = workoutLogService.getAllWorkoutLogByScheduleId(scheduleId);
+        ApiResponse<List<WorkoutLogResponse>> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage("Get data successfully!");
+        apiResponse.setResult(logs);
+        return apiResponse;
+    }
+
     @PostMapping()
     public ApiResponse<WorkoutLogResponse> createWorkoutLog(@RequestBody @Valid WorkoutLogRequest request) {
         ApiResponse<WorkoutLogResponse> apiResponse = new ApiResponse<>();

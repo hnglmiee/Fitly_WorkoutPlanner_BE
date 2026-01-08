@@ -10,6 +10,7 @@ import com.workoutplanner.MiniProject.Payload.Request.WorkoutLogRequest;
 import com.workoutplanner.MiniProject.Payload.Response.WorkoutLogResponse;
 import com.workoutplanner.MiniProject.Repositories.ExerciseRepository;
 import com.workoutplanner.MiniProject.Repositories.UserRepository;
+import com.workoutplanner.MiniProject.Repositories.WorkoutExerciseRepository;
 import com.workoutplanner.MiniProject.Repositories.WorkoutLogRepository;
 import com.workoutplanner.MiniProject.Repositories.WorkoutScheduleRepository;
 import com.workoutplanner.MiniProject.Services.Interfaces.IWorkoutLogService;
@@ -31,6 +32,8 @@ public class WorkoutLogService implements IWorkoutLogService {
     private WorkoutScheduleRepository workoutScheduleRepository;
     @Autowired
     private ExerciseRepository exerciseRepository;
+    @Autowired
+    private WorkoutExerciseRepository workoutExerciseRepository;
 
     public WorkoutLogService(WorkoutLogRepository workoutLogRepository) {
         this.workoutLogRepository = workoutLogRepository;
@@ -67,6 +70,33 @@ public class WorkoutLogService implements IWorkoutLogService {
             WorkoutLogResponse response = new WorkoutLogResponse();
             response.setScheduleId(workoutLog.getSchedule().getId());
             response.setExerciseName(workoutLog.getExercise().getName());
+            response.setExerciseId((workoutLog.getExercise().getId()));
+            response.setActualSets(workoutLog.getActualSets());
+            response.setActualReps(workoutLog.getActualReps());
+            response.setActualWeight(workoutLog.getActualWeight());
+            response.setNotes(workoutLog.getNotes());
+            response.setLoggedAt(workoutLog.getLoggedAt());
+            return response;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<WorkoutLogResponse> getAllWorkoutLogByScheduleId(Integer scheduleId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        WorkoutSchedule schedule = workoutScheduleRepository.findById(scheduleId).orElseThrow(() -> new AppException(ErrorCode.WORKOUT_SCHEDULE_NOT_EXISTED));
+
+        if(!schedule.getPlan().getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        List<WorkoutLog> workoutLogs = workoutLogRepository.findByScheduleIdOrderByLoggedAtDesc(scheduleId);
+        return workoutLogs.stream().map(workoutLog -> {
+            WorkoutLogResponse response = new WorkoutLogResponse();
+            response.setScheduleId(workoutLog.getSchedule().getId());
+            response.setExerciseName(workoutLog.getExercise().getName());
+            response.setExerciseId((workoutLog.getExercise().getId()));
             response.setActualSets(workoutLog.getActualSets());
             response.setActualReps(workoutLog.getActualReps());
             response.setActualWeight(workoutLog.getActualWeight());
@@ -105,10 +135,12 @@ public class WorkoutLogService implements IWorkoutLogService {
         workoutLog.setLoggedAt(Instant.now());
 
         workoutLogRepository.save(workoutLog);
+        updateScheduleStatusIfCompleted(schedule);
 
         // Response DTO -> Entity
         WorkoutLogResponse response = new WorkoutLogResponse();
         response.setScheduleId(schedule.getId());
+        response.setExerciseId(exercise.getId());
         response.setExerciseName(exercise.getName());
         response.setActualSets(workoutLog.getActualSets());
         response.setActualReps(workoutLog.getActualReps());
@@ -175,5 +207,22 @@ public class WorkoutLogService implements IWorkoutLogService {
 
         workoutLogRepository.delete(workoutLog);
         return true;
+    }
+
+    private void updateScheduleStatusIfCompleted(WorkoutSchedule schedule) {
+
+        Integer planId = schedule.getPlan().getId();
+        Integer scheduleId = schedule.getId();
+
+        // Tổng bài tập trong plan
+        int totalExercises = workoutExerciseRepository.findByPlan_Id(planId).size();
+
+        // Tổng bài đã log
+        int loggedExercises = workoutLogRepository.findBySchedule_Id(scheduleId).size();
+
+        if (totalExercises > 0 && totalExercises == loggedExercises) {
+            schedule.setStatus("COMPLETED");
+            workoutScheduleRepository.save(schedule);
+        }
     }
 }
