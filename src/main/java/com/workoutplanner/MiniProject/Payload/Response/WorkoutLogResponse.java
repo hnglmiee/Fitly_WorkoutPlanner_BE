@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public class WorkoutLogResponse {
+    private Integer id;
     private Integer scheduleId;
     private String exerciseName;
     private Integer exerciseId;
@@ -12,6 +13,14 @@ public class WorkoutLogResponse {
     private BigDecimal actualWeight;
     private String notes;
     private Instant loggedAt;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getScheduleId() {
         return scheduleId;

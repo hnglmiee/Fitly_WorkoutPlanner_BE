@@ -58,7 +58,7 @@ public class UserGoalService implements IUserGoalService {
 
         // Kiểm tra hoàn thành mục tiêu
         if(goalFinished(goal, lastestInBody)) {
-            response.setStatus("COMPLETED");
+            goal.setStatus("COMPLETED");
             userGoalRepository.save(goal);
             response.setStatus("COMPLETED");
         }

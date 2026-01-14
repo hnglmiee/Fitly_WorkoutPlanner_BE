@@ -101,7 +101,7 @@ public class UserService {
         // Update
         if(request.getFullName() != null) {
             user.setFullName(request.getFullName());
-        } if(request.getEmail() != null) {
+        } if(request.getEmail() != null && !request.getEmail().isEmpty()) {
             // Trung email
             if(userRepository.existsByEmail(request.getEmail()) && !request.getEmail().equals(user.getEmail())) {
                 throw new AppException(ErrorCode.USER_EXISTED);
