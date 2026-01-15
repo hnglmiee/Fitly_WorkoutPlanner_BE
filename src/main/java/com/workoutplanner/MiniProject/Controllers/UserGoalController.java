@@ -6,10 +6,13 @@ import com.workoutplanner.MiniProject.Payload.Request.WorkoutLogRequest;
 import com.workoutplanner.MiniProject.Payload.Response.ApiResponse;
 import com.workoutplanner.MiniProject.Payload.Response.UserGoalCreateResponse;
 import com.workoutplanner.MiniProject.Payload.Response.UserGoalResponse;
+import com.workoutplanner.MiniProject.Payload.Response.WorkoutSessionChartResponse;
 import com.workoutplanner.MiniProject.Services.Implementations.UserGoalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiPaths.UserGoal.ROOT)
@@ -21,6 +24,14 @@ public class UserGoalController {
     public ApiResponse<UserGoalResponse> checkGoalProgress() {
         ApiResponse<UserGoalResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userGoalService.checkGoalProgress());
+        apiResponse.setMessage("Get data successfully!");
+        return apiResponse;
+    }
+
+    @GetMapping()
+    public ApiResponse<List<UserGoalResponse>> getAllUserGoals() {
+        ApiResponse<List<UserGoalResponse>> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userGoalService.getAllUserGoal());
         apiResponse.setMessage("Get data successfully!");
         return apiResponse;
     }
@@ -46,6 +57,13 @@ public class UserGoalController {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
         apiResponse.setResult(Boolean.TRUE);
         apiResponse.setMessage("Delete data successfully!");
+        return apiResponse;
+    }
+    @GetMapping("/workouts/chart/weekly")
+    public ApiResponse<List<WorkoutSessionChartResponse>> getWeeklyWorkoutChart() {
+        ApiResponse<List<WorkoutSessionChartResponse>> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userGoalService.getWeeklyWorkoutChart());
+        apiResponse.setMessage("Get data successfully!");
         return apiResponse;
     }
 }

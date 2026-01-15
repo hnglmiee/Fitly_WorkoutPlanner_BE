@@ -23,4 +23,18 @@ public interface WorkoutLogRepository extends JpaRepository<WorkoutLog, Integer>
     List<WorkoutLog> findByScheduleIdOrderByLoggedAtDesc(Integer scheduleId);
     @Query("SELECT wl FROM WorkoutLog wl WHERE wl.schedule.id = :scheduleId ORDER BY wl.loggedAt DESC")
     List<WorkoutLog> findLogsByScheduleId(@Param("scheduleId") Integer scheduleId);
+
+    @Query("""
+    SELECT FUNCTION('DATE', wl.loggedAt), COUNT(wl.id)
+    FROM WorkoutLog wl
+    WHERE wl.schedule.plan.user = :user
+      AND wl.loggedAt BETWEEN :start AND :end
+    GROUP BY FUNCTION('DATE', wl.loggedAt)
+    ORDER BY FUNCTION('DATE', wl.loggedAt)
+""")
+    List<Object[]> countWorkoutByDay(
+            @Param("user") User user,
+            @Param("start") Instant start,
+            @Param("end") Instant end
+    );
 }

@@ -8,6 +8,7 @@ import com.workoutplanner.MiniProject.Models.UserInbody;
 import com.workoutplanner.MiniProject.Payload.Request.UserGoalRequest;
 import com.workoutplanner.MiniProject.Payload.Response.UserGoalCreateResponse;
 import com.workoutplanner.MiniProject.Payload.Response.UserGoalResponse;
+import com.workoutplanner.MiniProject.Payload.Response.WorkoutSessionChartResponse;
 import com.workoutplanner.MiniProject.Repositories.UserGoalRepository;
 import com.workoutplanner.MiniProject.Repositories.UserInbodyRepository;
 import com.workoutplanner.MiniProject.Repositories.UserRepository;
@@ -18,7 +19,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserGoalService implements IUserGoalService {
@@ -63,6 +71,20 @@ public class UserGoalService implements IUserGoalService {
             response.setStatus("COMPLETED");
         }
         return response;
+    }
+
+    @Override
+    public List<UserGoalResponse> getAllUserGoal() {
+        User user = getCurrentUser();
+        List<UserGoal> userGoals = userGoalRepository.findByUser(user);
+        return userGoals.stream().map(goal -> {
+            UserGoalResponse userGoalResponse = new UserGoalResponse();
+            userGoalResponse.setId(goal.getId());
+            userGoalResponse.setStatus(goal.getStatus());
+            userGoalResponse.setWorkoutSessionThisWeek(goal.getTargetWorkoutSessionsPerWeek());
+            userGoalResponse.setGoal(goal);
+            return userGoalResponse;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -156,6 +178,32 @@ public class UserGoalService implements IUserGoalService {
         return true;
     }
 
+    @Override
+    public List<WorkoutSessionChartResponse> getWeeklyWorkoutChart() {
+        User user = getCurrentUser();
+        Instant end = Instant.now();
+        Instant start = end.minus(7, ChronoUnit.DAYS);
+        List<Object[]> rawData =
+                workoutLogRepository.countWorkoutByDay(user, start, end);
+
+        Map<LocalDate, Integer> map = rawData.stream()
+                .collect(Collectors.toMap(
+                        r -> ((java.sql.Date) r[0]).toLocalDate(),
+                        r -> ((Number) r[1]).intValue()
+                ));
+
+        List<WorkoutSessionChartResponse> result = new ArrayList<>();
+
+        // Fill đủ 7 ngày (kể cả ngày không tập)
+        for (int i = 6; i >= 0; i--) {
+            LocalDate day = LocalDate.now().minusDays(i);
+            int sessions = map.getOrDefault(day, 0);
+
+            result.add(new WorkoutSessionChartResponse(day.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH), sessions));
+        }
+        return result;
+    }
+
     //    Lấy user đang đăng nhập
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -238,4 +286,6 @@ public class UserGoalService implements IUserGoalService {
         response.setWorkoutSessionThisWeek(loggedSessions);
         return response;
     }
+
+
 }

@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface UserGoalRepository extends JpaRepository<UserGoal, Integer> {
     Optional<UserGoal> findTopByUserAndStatusOrderByStartDateDesc(User user, String status);
     Optional<UserGoal> getUserGoalById(Integer id);
+    List<UserGoal> findByUser(User user);
 }

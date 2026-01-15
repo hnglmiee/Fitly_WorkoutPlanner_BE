@@ -4,10 +4,19 @@ import com.workoutplanner.MiniProject.Models.UserGoal;
 import com.workoutplanner.MiniProject.Models.UserInbody;
 
 public class UserGoalResponse {
+    private Integer id;
     private String status;
     private Integer workoutSessionThisWeek;
     private UserInbody lastestInBody;
     private UserGoal goal;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getStatus() {
         return status;

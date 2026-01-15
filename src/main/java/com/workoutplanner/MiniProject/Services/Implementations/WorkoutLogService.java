@@ -133,7 +133,7 @@ public class WorkoutLogService implements IWorkoutLogService {
         workoutLog.setActualReps(request.getActualReps());
         workoutLog.setActualWeight(request.getActualWeight());
         workoutLog.setNotes(request.getNotes());
-        workoutLog.setLoggedAt(Instant.now());
+        workoutLog.setLoggedAt(request.getLoggedAt());
 
         workoutLogRepository.save(workoutLog);
         updateScheduleStatusIfCompleted(schedule);
